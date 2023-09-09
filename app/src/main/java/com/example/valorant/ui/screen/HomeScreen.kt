@@ -37,6 +37,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.valorant.data.DataItem
 import com.example.valorant.ui.theme.blackV
@@ -48,7 +50,7 @@ import com.example.valorant.ui.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(){
+fun HomeScreen(viewModel: HomeViewModel, navHostController: NavHostController){
     Scaffold(topBar = {
         CenterAlignedTopAppBar(colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             blackV
@@ -64,95 +66,17 @@ fun HomeScreen(){
                 )
             })
     }) {
-        TabScreen(modifier = Modifier.padding(it))
+        TabScreen(modifier = Modifier.padding(it), navHostController, viewModel)
     }
 }
 
-@Composable
-fun HeroesCard(dataItem: DataItem) {
-    Box(
-        Modifier
-            .height(200.dp)
-            .background(Color.Transparent)
-            .padding(horizontal = 6.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .background(blueV, shape = RoundedCornerShape(20.dp))
-                .fillMaxWidth()
-                .fillMaxHeight(0.8f)
-                .align(Alignment.BottomCenter)
-        ) {
-            Text(
-                text = dataItem.role?.displayName ?: "Error",
-                maxLines = 1,
-                style = TextStyle(
 
-                    fontSize = 70.sp,
-                    letterSpacing = 20.sp,
-                    color = Color.White.copy(alpha = 0.1f),
-                    fontFamily = tungstenFont
-                ),
-                modifier = Modifier.align(
-                    Alignment.Center
-                )
-
-            )
-
-        }
-        Image(
-            contentScale = ContentScale.FillHeight,
-            painter = rememberAsyncImagePainter(dataItem.fullPortrait),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxHeight(1f)
-                .align(Alignment.CenterStart)
-                .graphicsLayer {
-                    translationY = (-50).toFloat()
-                    translationX = (-100).toFloat()
-                }
-                .padding(start = 10.dp)
-        )
-        Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(start = 40.dp)
-        ) {
-            Text(
-                dataItem.displayName ?: "Error",
-                fontSize = 40.sp,
-                color = Color.White,
-                fontFamily = valorantFont,
-
-                )
-            Row {
-                Text("")
-            }
-        }
-    }
-}
 
 @Composable
-fun AgentsList(){
-    val viewModel: HomeViewModel = viewModel()
-    val agentsData = viewModel.agentsData.collectAsState()
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier
-            .background(blackV)
-            .fillMaxSize()) {
-        items(count = agentsData.value.size,){
-            HeroesCard(agentsData.value[it])
-        }
+fun TabScreen(modifier: Modifier, navHostController: NavHostController, viewModel: HomeViewModel) {
+    val tabIndex= viewModel.tabIndex
 
-    }
-}
-
-@Composable
-fun TabScreen(modifier: Modifier) {
-    var tabIndex by remember { mutableStateOf(0) }
-
-    val tabs = listOf("Agents", "Weapon")
+    val tabs = listOf("Agents", "Weapons")
 
     Column(modifier = modifier.fillMaxWidth()) {
         TabRow(
@@ -182,12 +106,13 @@ fun TabScreen(modifier: Modifier) {
                         )
                     },
                     selected = tabIndex == index,
-                    onClick = { tabIndex = index }
+                    onClick = { viewModel.tabIndex(index) }
                 )
             }
         }
         when (tabIndex) {
-            0 -> AgentsList()
+            0 -> AgentsList(navHostController, viewModel)
+            1 -> WeaponsList(navHostController,viewModel)
         }
     }
 }
