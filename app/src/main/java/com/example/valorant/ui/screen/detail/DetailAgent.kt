@@ -15,6 +15,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 
 import androidx.compose.foundation.layout.Arrangement
@@ -58,6 +59,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -194,7 +196,7 @@ fun AgentsHeader(
                         Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = "Arrow Back",
-                            modifier = Modifier.size(30.dp)
+                            modifier = Modifier.size(50.dp)
                         )
                     }
 
@@ -208,48 +210,54 @@ fun AgentsHeader(
                 Modifier
                     .background(blackV)
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(16.dp),
             ) {
-                Text(
-                    "Abilities",
-                    style = TextStyle(
-                        color = Color.White,
-                        fontSize = 30.sp,
-                        fontFamily = tungstenFont
+                Column(Modifier.fillMaxHeight(0.6f)) {
+                    Text(
+                        "Abilities",
+                        style = TextStyle(
+                            color = Color.White,
+                            fontSize = 30.sp,
+                            fontFamily = tungstenFont
+                        )
                     )
-                )
-                AbilitiesList(dataItems = data!!)
-                Spacer(modifier = Modifier.height(30.dp))
-                Text(
-                    "Voice Line",
-                    style = TextStyle(
-                        color = Color.White,
-                        fontSize = 30.sp,
-                        fontFamily = tungstenFont
-                    ),
-                )
-                Box() {
+                    AbilitiesList(dataItems = data!!)
+                }
 
-                    Image(
-                        painter = rememberAsyncImagePainter(model = data.displayIcon),
-                        contentDescription = "Display Icon",
-                        modifier = Modifier
-                            .size(90.dp)
-                            .align(Alignment.Center)
+
+                Column {
+                    Text(
+                        "Voice Line",
+                        style = TextStyle(
+                            color = Color.White,
+                            fontSize = 30.sp,
+                            fontFamily = tungstenFont
+                        ),
                     )
-                    IconButton(
-                        onClick = { mMediaPlayer.start() }, modifier = Modifier.align(
-                            Alignment.Center
+                    Box() {
+
+                        Image(
+                            painter = rememberAsyncImagePainter(model = data?.displayIcon),
+                            contentDescription = "Display Icon",
+                            modifier = Modifier
+                                .size(90.dp)
+                                .align(Alignment.Center)
                         )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "",
-                            tint = Color.White,
-                            modifier = Modifier.fillMaxSize(1f)
-                        )
+                        IconButton(
+                            onClick = { mMediaPlayer.start() }, modifier = Modifier.align(
+                                Alignment.Center
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = "",
+                                tint = Color.White,
+                                modifier = Modifier.fillMaxSize(1f)
+                            )
+                        }
                     }
                 }
+
 
             }
         }
@@ -287,12 +295,20 @@ fun AbilitiesList(dataItems: DataItem) {
                                         } else {
                                             1f
                                         }
-                                    ).height( if (index != chosenAbilities) {
-                                        40.dp
-                                    } else {
-                                        60.dp
-                                    })
-                                    .animateContentSize()
+                                    )
+                                    .size(
+                                        if (index != chosenAbilities) {
+                                            50.dp
+                                        } else {
+                                            80.dp
+                                        }
+                                    )
+                                    .animateContentSize(
+                                        spring(
+                                            dampingRatio = Spring.DampingRatioHighBouncy,
+                                            stiffness = Spring.StiffnessMedium
+                                        )
+                                    )
                                     .clickable { chosenAbilities = index }
 
                             )
@@ -315,7 +331,11 @@ fun AbilitiesList(dataItems: DataItem) {
             Text(
                 dataItems.abilities?.get(chosenAbilities)?.description!!,
                 color = Color.White,
-                style = TextStyle(fontSize = 16.sp)
+                style = TextStyle(fontSize = 16.sp),
+                textAlign = TextAlign.Justify,
+                modifier = Modifier
+                    .border(width = 2.dp, color = Color.White)
+                    .padding(10.dp)
             )
         }
     }

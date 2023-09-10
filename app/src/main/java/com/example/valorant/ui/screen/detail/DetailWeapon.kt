@@ -198,7 +198,7 @@ fun WeaponHeader(
                         Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = "Arrow Back",
-                            modifier = Modifier.size(30.dp)
+                            modifier = Modifier.size(50.dp)
                         )
                     }
 

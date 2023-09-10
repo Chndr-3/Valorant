@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.valorant.ui.screen.HomeScreen
+import com.example.valorant.ui.screen.SplashScreen
 import com.example.valorant.ui.screen.detail.DetailAgents
 import com.example.valorant.ui.screen.detail.DetailWeapon
 import com.example.valorant.ui.viewmodel.HomeViewModel
@@ -16,8 +17,11 @@ fun Navigation() {
     val viewModel: HomeViewModel = viewModel()
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = "splash"
     ) {
+        composable("splash"){
+            SplashScreen(navHostController = navController)
+        }
         composable("home") {
             HomeScreen(viewModel = viewModel, navHostController = navController)
         }
